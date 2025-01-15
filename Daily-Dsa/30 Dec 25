@@ -1,0 +1,73 @@
+import java.util.*;
+
+public class Main {
+
+    public static int matrixChange(int[][] matrix, int[][] q) {
+        HashMap<Integer, Integer> rowmp = new HashMap<>();
+        HashMap<Integer, Integer> colmp = new HashMap<>();
+        HashMap<Pair, Integer> freqij = new HashMap<>();
+
+        for (int i = 0; i < q.length; i++) {
+            int x = q[i][0];
+            int y = q[i][1];
+            rowmp.put(x, rowmp.getOrDefault(x, 0) + 1);
+            colmp.put(y, colmp.getOrDefault(y, 0) + 1);
+            Pair p = new Pair(x, y);
+            freqij.put(p, freqij.getOrDefault(p, 0) + 1);
+        }
+
+        int change = 0;
+
+        for (int i = 1; i <= matrix.length; i++) {
+            for (int j = 1; j <= matrix[0].length; j++) {
+                Pair currentPair = new Pair(i, j);
+                int g = rowmp.getOrDefault(i, 0) - freqij.getOrDefault(currentPair, 0);
+                int p = colmp.getOrDefault(j, 0) - freqij.getOrDefault(currentPair, 0);
+                int t = g + p + freqij.getOrDefault(currentPair, 0);
+
+                if ((g + p) % 2 != 0) {
+                    change += t;
+                }
+            }
+        }
+
+        return change;
+    }
+
+    public static void main(String[] args) {
+        int[][] matrix = {
+            {1, 0, 0},
+            {0, 1, 0},
+            {0, 1, 0}
+        };
+        int[][] q = {
+            {1, 2},
+            {2, 3}
+        };
+
+        System.out.println(matrixChange(matrix, q)); // Example call
+    }
+}
+
+class Pair {
+    int i;
+    int j;
+
+    Pair(int i, int j) {
+        this.i = i;
+        this.j = j;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Pair p = (Pair) obj;
+        return i == p.i && j == p.j;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * i + j;
+    }
+}

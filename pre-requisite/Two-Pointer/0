@@ -1,1 +1,182 @@
-//Todo
+problem 1 : Number of subarrays whose sum <= K 
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        long k = scanner.nextLong();
+        long[] b = new long[n];
+        
+        for (int i = 0; i < n; i++) {
+            b[i] = scanner.nextLong();
+        }
+        
+        long count = 0;
+        long sum = 0;
+        for (int i = 0, j = 0; j < n; j++) {
+            sum += b[j];
+            while (sum > k) {
+                sum -= b[i];
+                i++;
+            }
+            count += (j - i + 1);
+        }
+        
+        System.out.println(count);
+        scanner.close();
+    }
+}
+
+
+problem 2 : Number of subarrays whose count of distinct number <= K 
+
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int k = scanner.nextInt();
+        int[] b = new int[n];
+        for (int i = 0; i < n; i++) {
+            b[i] = scanner.nextInt();
+        }
+        int count = 0;
+        int sum = 0;
+        Map<Integer, Integer> g = new HashMap<>();
+        for (int i = 0, j = 0; j < n; j++) {
+            g.put(b[j], g.getOrDefault(b[j], 0) + 1);
+            int d = g.size();
+            while (d > k) {
+                g.put(b[i], g.get(b[i]) - 1);
+                if (g.get(b[i]) == 0) {
+                    g.remove(b[i]);
+                }
+                i++;
+                d = g.size();
+            }
+            count += (j - i + 1);
+        }
+        System.out.println(count);
+    }
+}
+
+
+
+problem 3 : Number of pairs whose diff <=K 
+
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        long k = scanner.nextLong();
+        long[] b = new long[n];
+        
+        for (int i = 0; i < n; i++) {
+            b[i] = scanner.nextLong();
+        }
+        
+        long count = 0;
+        
+        Arrays.sort(b);
+        
+        for (int i = 0, j = 0; j < n; j++) {
+            long d = b[j] - b[i]; //[i............j]
+            while (d > k) {
+                i++;
+                d = b[j] - b[i];
+            }
+            count += (j - i + 1);
+        }
+        
+        System.out.println(count - n);
+        scanner.close();
+    }
+}
+
+
+problem 4 : https://leetcode.com/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/description/
+class Solution {
+    public int longestSubarray(int[] nums, int limit) {
+        // ArrayList<ArrayList<Integer>> ans = findSubarrays(nums);
+        // int maxLength = 0;
+
+        // for (ArrayList<Integer> ab : ans) {
+        //     if (limitsum(ab, limit)) {
+        //         maxLength = Math.max(maxLength, ab.size());
+        //     }
+        // }
+        // return maxLength;
+
+        /*int maxLength = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            long maxVal = nums[i];
+            long minVal = nums[i];
+            for (int j = i; j < nums.length; j++) {
+                minVal = Math.min(minVal, nums[j]);
+                maxVal = Math.max(maxVal, nums[j]);
+
+                if (Math.abs(maxVal - minVal) <= limit) {
+                    maxLength = Math.max(maxLength, j - i + 1);
+                } else {
+                    break; // No need to continue if condition fails for current window
+                }
+            }
+        }
+        return maxLength;*/
+         Deque<Integer> maxDeque = new ArrayDeque<>();
+        Deque<Integer> minDeque = new ArrayDeque<>();
+        int left = 0, right;
+        int maxLength = 0;
+
+        for (right = 0; right < nums.length; right++) {
+            // Add nums[right] to maxDeque maintaining decreasing order
+            while (!maxDeque.isEmpty() && nums[right] > maxDeque.peekLast()) maxDeque.pollLast();
+            maxDeque.offerLast(nums[right]);
+
+            // Add nums[right] to minDeque maintaining increasing order
+            while (!minDeque.isEmpty() && nums[right] < minDeque.peekLast()) minDeque.pollLast();
+            minDeque.offerLast(nums[right]);
+
+            // Adjust window by removing elements from left
+            while (maxDeque.peekFirst() - minDeque.peekFirst() > limit) {
+                if (maxDeque.peekFirst() == nums[left]) maxDeque.pollFirst();
+                if (minDeque.peekFirst() == nums[left]) minDeque.pollFirst();
+                left++;
+            }
+
+            // Update maxLength for valid subarray
+            maxLength = Math.max(maxLength, right - left + 1);
+        }
+
+        return maxLength;
+
+    }
+    /*public ArrayList<ArrayList<Integer>> findSubarrays(int[] nums) {
+         ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        
+        for (int start = 0; start < nums.length; start++) {
+            for (int end = start; end < nums.length; end++) {
+                ArrayList<Integer> subarray = new ArrayList<>();
+                for (int i = start; i <= end; i++) {
+                    subarray.add(nums[i]);
+                }
+                ans.add(subarray);
+            }
+        }
+        
+        return ans;
+    }
+
+    public boolean limitsum(ArrayList<Integer> sb, int limit ){
+        int max = Collections.max(sb);
+        int min = Collections.min(sb);
+        return Math.abs(max - min) <= limit;
+
+    }*/
+}

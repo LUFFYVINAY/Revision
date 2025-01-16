@@ -1,0 +1,51 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Input size n
+        int n = sc.nextInt();
+        
+        // Array b to store the input values
+        int[] b = new int[n + 1];
+        
+        // Input values for b[1] to b[n]
+        for (int i = 1; i <= n; i++) {
+            b[i] = sc.nextInt();
+        }
+
+        // TreeMap to store frequencies, sorted in descending order by key
+        TreeMap<Integer, Integer> k = new TreeMap<>(Collections.reverseOrder());
+
+        // Calculate frequency of each element in b
+        for (int i = 1; i <= n; i++) {
+            k.put(b[i], k.getOrDefault(b[i], 0) + 1);
+        }
+
+        // ArrayList of pairs to store the (key, frequency) pairs
+        List<Map.Entry<Integer, Integer>> g = new ArrayList<>(k.entrySet());
+
+        // Variables to calculate the steps
+        int size = g.size();
+        int step = 0;
+
+        // Traverse the list g backwards and update frequencies and steps
+        for (int i = 0; i < size-1; i++) {
+            System.out.println(g.get(i));
+            // Update frequency of previous element
+            g.get(i + 1).setValue(g.get(i + 1).getValue() + g.get(i).getValue());
+            
+            // Increment the step by the frequency of the current element
+            step += g.get(i).getValue();
+            
+            // Set the frequency of the current element to 0 (not necessary since we are updating the previous element)
+            g.get(i).setValue(0);
+        }
+
+        // Output the result
+        System.out.println(step);
+
+        sc.close();
+    }
+}

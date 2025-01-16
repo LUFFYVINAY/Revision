@@ -1,0 +1,142 @@
+probelm : find the shortest distance from the source to destination 
+
+/*package whatever //do not write package name here */
+
+import java.io.*;
+
+import java.util.*;
+
+class GFG {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+
+        List<Integer>[] G = new ArrayList[n + 5];
+        for (int i = 0; i <= n; i++) {
+            G[i] = new ArrayList<>();
+        }
+
+        for (int i = 1; i <= m; i++) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+            G[u].add(v);
+            G[v].add(u);
+        }
+
+        Queue<Integer> q = new LinkedList<>();
+        int source = sc.nextInt();
+        q.offer(source);
+
+        int[] used = new int[n + 5];
+        Arrays.fill(used, 0);
+        used[source] = 1;
+
+        int[] lvl = new int[n + 5];
+        Arrays.fill(lvl, 0);
+        lvl[source] = 0;
+
+        while (!q.isEmpty()) {
+            int v = q.poll();
+
+            for (int u : G[v]) {
+                if (used[u] == 0) {
+                    q.offer(u);
+                    used[u] = 1;
+                    lvl[u] = lvl[v] + 1;
+                }
+            }
+        }
+
+        for (int i = 1; i <= n; i++) {
+            if (used[i] == 0) {
+                System.out.println("You cannot visit the node " + i + " from the source node = " + source);
+            } else {
+                System.out.println("You can visit the node " + i + " from the source node = " + source);
+            }
+        }
+    }
+}
+
+
+
+probelm : find the shortest distance all shortest distance from the source    
+
+
+
+// Java code equivalent of the given C++ code with comments
+
+import java.util.*;
+
+class GFG {
+
+
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt(); // taking input --> size of graph
+        int m = sc.nextInt(); // taking input --> number of edges in the graph
+
+        List<Integer>[] G = new List[n+5]; // constructing a graph using adjacency list
+
+        for (int i = 0; i < n+5; i++) {
+            G[i] = new ArrayList<Integer>();
+        }
+
+        int i = 1;
+        while (i <= m) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+            G[u].add(v);
+            G[v].add(u);
+            // making undirected graph
+            i++;
+        }
+
+        Queue<Integer> q = new LinkedList<Integer>(); // declaring a queue
+
+        q.offer(1); // pushing the source node = 1 in the queue
+
+        int[] used = new int[n+5]; // declaring an empty used array where in used[i] = 0 means this node has not yet been visited in our algorithm
+        int[] ways = new int[n+5];
+        used[1] = 1; // 1st node has been visited hence setting is as 1 and it is inserted in the queue as well
+        int[] lvl = new int[n+5]; // declaring level array this basically lets us know level of each node
+        lvl[1] = 0; // lvl of 1st node which we mean the source node is 0 as we start from here
+        ways[1] = 1;
+
+        while (!q.isEmpty()) {
+            // BFS Algorithm
+
+            int v = q.poll(); // top most element of queue
+            System.out.println(v + " " + ways[v]); // printing that node with its number of ways to visit
+            System.out.println();
+
+            for (int u : G[v]) {
+                // this simply means you're iterating through all nodes connected to node v
+                if (used[u] == 0) {
+
+                    // if the node u(node connected to v) has never been visited before then let's visit it
+                    q.offer(u);
+                    used[u] = 1; // it has now been visited hence setting its values as 1
+                    lvl[u] = lvl[v] + 1; // lvl[u] will be 1 greater than lvl[1] as we move 1 step forward from u to v
+                    ways[u] = ways[u] + ways[v];
+
+                } else {
+
+                    if (lvl[v]+1 == lvl[u]) {
+                        ways[u] = ways[u] + ways[v];
+                    }
+
+                }
+
+            }
+
+        }
+
+        sc.close();
+    }
+}

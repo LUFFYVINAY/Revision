@@ -1,1 +1,47 @@
-//todo
+https://leetcode.com/contest/biweekly-contest-138/problems/minimum-amount-of-damage-dealt-to-bob/description/
+
+
+import java.util.*;
+
+class Solution {
+    public long minDamage(int power, int[] damage, int[] health) {
+        int n = damage.length;
+        List<Pair> threat = new ArrayList<>();
+
+        // Calculate threat level for each enemy: (time_to_kill / damage[i])
+        for (int i = 0; i < n; i++) {
+            double time_to_kill = Math.ceil((double) health[i] / power);
+            threat.add(new Pair(time_to_kill / damage[i], i));
+        }
+
+        // Sort enemies by threat level in ascending order
+        Collections.sort(threat, (a, b) -> Double.compare(a.threatLevel, b.threatLevel));
+
+        long totalDamage = 0;
+        long cumulativeDamage = 0;
+        for (int d : damage) cumulativeDamage += d;
+
+        for (int i = 0; i < n; i++) {
+            int idx = threat.get(i).index;
+            int time_to_kill = (int) Math.ceil((double) health[idx] / power);
+
+            // Add the damage dealt by all enemies during the time it takes to kill the current one
+            totalDamage += cumulativeDamage * time_to_kill;
+
+            // After this enemy is killed, subtract its damage from the cumulative damage
+            cumulativeDamage -= damage[idx];
+        }
+
+        return totalDamage;
+    }
+
+    class Pair {
+        double threatLevel;
+        int index;
+
+        Pair(double threatLevel, int index) {
+            this.threatLevel = threatLevel;
+            this.index = index;
+        }
+    }
+}

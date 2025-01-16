@@ -1,0 +1,120 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        long n = sc.nextLong();
+
+        // Array to store the elements
+        long[] b = new long[(int)n + 2];
+        long[] prefix = new long[(int)n + 1]; // Prefix sum array
+
+        long total_sum = 0;
+        b[0] = -1000000000000000000L; // -1e18
+        b[(int)n + 1] = 1000000000000000000L; // 1e18
+
+        // Input array elements and calculate prefix sums
+        for (long i = 1; i <= n; i++) {
+            b[(int)i] = sc.nextLong();
+            total_sum += b[(int)i];
+        }
+
+        // Sort the array for binary search
+        Arrays.sort(b, 1, (int)n + 1);
+
+        for (long i = 1; i <= n; i++) {
+            prefix[(int)i] = b[(int)i] + prefix[(int)i - 1];
+        }
+
+        // Handle queries
+        long q = sc.nextLong();
+        while (q-- > 0) {
+            long target = sc.nextLong();
+
+            // Binary search to find the last element <= target
+            long low = 1, high = n, g = 0;
+
+            while (low <= high) {
+                long mid = (low + high) / 2;
+                if (b[(int)mid] <= target) {
+                    g = mid;
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            }
+
+            // Calculate left part and right part
+            long left_part = target * g - prefix[(int)g];
+            long right_part = (total_sum - prefix[(int)g]) - target * (n - g);
+
+            // Output the total operations
+            System.out.println(left_part + right_part);
+        }
+
+        sc.close();
+    }
+}
+
+
+
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        long n = sc.nextLong();
+
+        // Array to store the elements
+        long[] b = new long[(int)n + 2];
+        long[] prefix = new long[(int)n + 1]; // Prefix sum array
+
+        long total_sum = 0;
+        b[0] = -1000000000000000000L; // -1e18
+        b[(int)n + 1] = 1000000000000000000L; // 1e18
+
+        // Input array elements and calculate prefix sums
+        for (long i = 1; i <= n; i++) {
+            b[(int)i] = sc.nextLong();
+            total_sum += b[(int)i];
+        }
+
+        // Sort the array for binary search
+        Arrays.sort(b, 1, (int)n + 1);
+
+        for (long i = 1; i <= n; i++) {
+            prefix[(int)i] = b[(int)i] + prefix[(int)i - 1];
+        }
+
+        // Handle queries
+        long q = sc.nextLong();
+        while (q-- > 0) {
+            long target = sc.nextLong();
+
+            // Binary search to find the last element <= target
+            long low = 1, high = n, g = 0;
+
+            while (low <= high) {
+                long mid = (low + high) / 2;
+                if (b[(int)mid] <= target) {
+                    g = mid;
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            }
+
+            // Calculate left part and right part
+            long left_part = target * g - prefix[(int)g];
+            long right_part = (total_sum - prefix[(int)g]) - target * (n - g);
+
+            // Output the total operations
+            System.out.println(left_part + right_part);
+        }
+
+        sc.close();
+    }
+}
+

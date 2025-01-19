@@ -1,0 +1,67 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ConstructArray {
+    // Precomputed sequences for N = 6 to 11
+    private static final int[][] precomputed = {
+        {1, 1, 2, 3, 1, 2},        // N = 6
+        {1, 1, 2, 3, 1, 2, 2},     // N = 7
+        {1, 1, 2, 3, 1, 2, 2, 4},  // N = 8
+        {1, 1, 2, 3, 1, 2, 2, 4, 4},// N = 9
+        {1, 1, 2, 3, 1, 2, 2, 4, 4, 4},// N = 10
+        {1, 1, 2, 3, 1, 2, 2, 4, 4, 5, 4} // N = 11
+    };
+
+    // Function to construct the array for a given N
+    private static void constructArray(int n) {
+        List<Integer> result = new ArrayList<>();
+        int fullBlocks = n / 6;
+        int remainder = n % 6;
+        int p = 0;
+
+        // Add (fullBlocks - 1) blocks of size 6
+        for (int i = 0; i < fullBlocks - 1; i++) {
+            int[] block = precomputed[0];
+            for (int j = 0; j < block.length; j++) {
+                result.add(block[j] + p);
+            }
+            p += 3;
+        }
+
+        // Add one block of size 6 + remainder
+        if (remainder == 0) {
+            int[] block = precomputed[0];
+            for (int j = 0; j < block.length; j++) {
+                result.add(block[j] + p);
+            }
+            p += 3;
+        } else {
+            int[] block = precomputed[remainder];
+            for (int j = 0; j < block.length; j++) {
+                result.add(block[j] + p);
+            }
+            p += 3;
+        }
+
+        // Output the array
+        for (int x : result) {
+            System.out.print(x + " ");
+        }
+        System.out.println();
+    }
+
+    public static void solve() {
+        Scanner scanner = new Scanner(System.in);
+        int t = scanner.nextInt(); // Number of test cases
+        while (t-- > 0) {
+            int n = scanner.nextInt();
+            constructArray(n);
+        }
+        scanner.close();
+    }
+
+    public static void main(String[] args) {
+        solve();
+    }
+}

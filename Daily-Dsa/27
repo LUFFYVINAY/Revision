@@ -1,0 +1,112 @@
+problem 1 : Type 1 easy version 
+
+
+import java.util.*;
+
+public class Main {
+
+    public static int countSubarrays(int[] arr, int d, int m) {
+        int n = arr.length;
+        int count = 0;
+        Map<Integer, Integer> mp = new HashMap<>();
+        mp.put(0, 1);
+
+        int[] prefix = new int[n + 1];
+        prefix[0] = 0;
+        
+        for (int i = 1; i < n; i++) {
+            if (arr[i] == d) {
+                prefix[i] = 1;
+            }
+        }
+
+        for (int i = 1; i < n; i++) {  
+            prefix[i + 1] = prefix[i] + 1;
+            mp.put(prefix[i], mp.getOrDefault(prefix[i], 0) + 1);
+        }
+
+        for (int i = 0; i < n; i++) {
+            int z = prefix[i] - m; 
+            count += mp.getOrDefault(z, 0); 
+        }
+
+        return count;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 1, 3, 2}; // Example array
+        int d = 2; 
+        int m = 3;  
+
+        int count = countSubarrays(arr, d, m);
+        System.out.println("Count of subarrays with sum " + m + ": " + count);
+    }
+}
+
+
+
+
+prroblem type 2 : hard version 
+
+import java.util.*;
+
+public class Main {
+  
+    public static int ValidSubarrays(int[] arr, int d, int m, int n, int z) {
+        int k = arr.length;
+        int[] prefix1 = new int[k + 1];
+        int[] prefix2 = new int[k + 1];
+
+        HashMap<Integer, Integer> mp1 = new HashMap<>();
+        HashMap<Integer, Integer> mp2 = new HashMap<>();
+        HashMap<Integer, Integer> mp3 = new HashMap<>();
+
+        mp1.put(0, 1);
+        mp2.put(0, 1);
+        mp3.put(0, 1);
+
+        prefix1[0] = 0;
+        prefix2[0] = 0;
+      
+        for (int i = 1; i < n; i++) {
+            if (arr[i] == d) {
+                prefix1[i] = 1;
+            }
+            if (arr[i] == z) {
+                prefix2[i] = 1;
+            }
+        }
+
+        for (int i = 0; i < k; i++) {
+            prefix1[i + 1] = prefix1[i] + prefix1[i + 1]; 
+            prefix2[i + 1] = prefix2[i] + prefix2[i + 1]; 
+            mp1.put(prefix1[i], mp1.getOrDefault(prefix1[i], 0) + 1);
+            mp2.put(prefix2[i], mp2.getOrDefault(prefix2[i], 0) + 1);
+        }
+
+        for (int i = 0; i < n; i++) {
+            int val = prefix1[i] * n - prefix2[i] * m;
+            mp3.put(val, mp3.getOrDefault(val, 0) + 1);
+        }
+
+        int count = 0;
+        for (int i = 1; i < n; i++) { 
+            count += mp3.getOrDefault(prefix1[i - 1] * n - prefix2[i - 1] * m, 0);
+        }
+
+        return count;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+        
+        int[] arr = {1, 2, 1, 3, 2}; // Example array
+        int d = 2; 
+        int m = 3; 
+        int n = 3;
+        int z = 2; 
+
+        int count = ValidSubarrays(arr, d, m, n, z); 
+        System.out.println("Count of subarrays with sum " + m + ": " + count);
+    }
+}

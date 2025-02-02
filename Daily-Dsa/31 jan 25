@@ -1,0 +1,52 @@
+import java.util.*;
+
+public class Main {
+    public static long mod = 1000000007;
+
+    public static long power(long a, long b, long mod) {
+        long res = 1;
+        while (b > 0) {
+            if (b % 2 == 1) {
+                res = (res * a) % mod;
+            }
+            a = (a * a) % mod;
+            b /= 2;
+        }
+        return res;
+    }
+
+    public static long compute(long m, long k) {
+        int count = 0;
+        for (int i = 0; i <= m; i++) {
+            for (int j = 0; j <= m; j++) {
+                if (i % k == j % k) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public static long CountValid(long[] A, long k, long m, long n) {
+        long total = 0;
+        long TotalFinal = compute(m, k);
+
+        if (n % 2 == 0) {
+            total = (total + power(TotalFinal, n / 2, mod)) % mod;
+        } else {
+            total = (total + (power(TotalFinal, n / 2, mod) * TotalFinal) % mod) % mod;
+        }
+
+        return total;
+    }
+
+    public static void main(String[] args) {
+        long[] A = new long[]{0, 3, 0, 4, 1, 5};
+        long k = 2;
+        long m = 2;
+        long n = A.length;
+
+        long result = CountValid(A, k, m, n);
+        System.out.println("Result: " + result);
+    }
+}

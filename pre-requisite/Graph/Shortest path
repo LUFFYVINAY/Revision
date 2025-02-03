@@ -1,0 +1,158 @@
+import java.util.*;
+
+public class Main {
+
+    // Floyd-Warshall Algorithm
+    public static int[][] floydWarshall(int[][] graph) {
+        int n = graph.length;
+        int dest[][] = new int[n][n];
+
+        // Initialize the distance matrix
+        for (int i = 0; i < n; i++)
+            System.arraycopy(graph[i], 0, dest[i], 0, n);
+
+        // Dynamic Programming approach to update shortest paths
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (dest[i][k] != Integer.MAX_VALUE && dest[k][j] != Integer.MAX_VALUE
+                            && dest[i][k] + dest[k][j] < dest[i][j]) {
+                        dest[i][j] = dest[i][k] + dest[k][j];
+                    }
+                }
+            }
+        }
+
+        // Print the distance matrix
+        for (int[] row : dest) {
+            System.out.println(Arrays.toString(row));
+        }
+
+        return dest;
+    }
+
+    // Bellman-Ford Algorithm
+    public static int[] bellmanFord(int src, ArrayList<Edge> edges, int n) {
+        int dest[] = new int[n];
+        Arrays.fill(dest, Integer.MAX_VALUE);
+        dest[src] = 0;
+
+        // Relax all edges (n-1) times
+        for (int i = 0; i < n - 1; i++) {
+            for (Edge e : edges) {
+                if (dest[e.src] != Integer.MAX_VALUE && dest[e.src] + e.weight < dest[e.dest]) {
+                    dest[e.dest] = dest[e.src] + e.weight;
+                }
+            }
+        }
+
+        // Check for negative-weight cycles
+        for (Edge e : edges) {
+            if (dest[e.src] != Integer.MAX_VALUE && dest[e.src] + e.weight < dest[e.dest]) {
+                System.out.println("Graph contains a negative-weight cycle!");
+                return null;
+            }
+        }
+
+        return dest;
+    }
+
+    // Dijkstra’s Algorithm
+    public static int[] dijkstra(int src, ArrayList<ArrayList<Pair>> adj) {
+        int dest[] = new int[adj.size()];
+        Arrays.fill(dest, Integer.MAX_VALUE);
+        PriorityQueue<Pair> pq = new PriorityQueue<>((a, b) -> Integer.compare(a.weight, b.weight));
+        dest[src] = 0;
+        pq.offer(new Pair(src, 0));
+
+        while (!pq.isEmpty()) {
+            Pair p = pq.poll();
+            int n = p.node;
+            int wt = p.weight;
+
+            if (wt > dest[n]) continue;
+
+            for (Pair neighbor : adj.get(n)) {
+                if (dest[n] + neighbor.weight < dest[neighbor.node]) {
+                    dest[neighbor.node] = dest[n] + neighbor.weight;
+                    pq.offer(new Pair(neighbor.node, dest[neighbor.node]));
+                }
+            }
+        }
+        return dest;
+    }
+
+    public static void main(String[] args) {
+        int n = 6;
+
+        // Graph representation
+        ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
+        ArrayList<Edge> edges = new ArrayList<>();
+        for (int i = 0; i < n; i++) adj.add(new ArrayList<>());
+
+        // Adding edges
+        addEdge(adj, edges, 5, 2, 3);
+        addEdge(adj, edges, 5, 0, 1);
+        addEdge(adj, edges, 4, 0, 2);
+        addEdge(adj, edges, 4, 1, 4);
+        addEdge(adj, edges, 2, 3, 6);
+        addEdge(adj, edges, 3, 1, 5);
+
+        int src = 0;
+
+        // Run Dijkstra
+        int[] dijkstraPaths = dijkstra(src, adj);
+        System.out.println("Dijkstra - Shortest distances from node " + src + ": " + Arrays.toString(dijkstraPaths));
+
+        // Run Bellman-Ford for each node
+        for (int i = 0; i < n; i++) {
+            int[] bellmanFordPaths = bellmanFord(i, edges, n);
+            if (bellmanFordPaths != null) {
+                System.out.println("Bellman-Ford - Shortest distances from node " + i + ": " + Arrays.toString(bellmanFordPaths));
+            }
+        }
+
+        // Example graph for Floyd-Warshall
+        int[][] graph = {
+                {0, 3, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE},
+                {Integer.MAX_VALUE, 0, 1, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE},
+                {Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 7, Integer.MAX_VALUE, 2},
+                {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 1, Integer.MAX_VALUE},
+                {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 4},
+                {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 0}
+        };
+
+        System.out.println("Floyd-Warshall Algorithm Output:");
+        floydWarshall(graph);
+    }
+
+    // Helper function to add undirected edges
+    public static void addEdge(ArrayList<ArrayList<Pair>> adj, ArrayList<Edge> edges, int u, int v, int w) {
+        adj.get(u).add(new Pair(v, w));
+        adj.get(v).add(new Pair(u, w)); // Add reverse edge
+        edges.add(new Edge(u, v, w)); // Add directed edge for Bellman-Ford
+        edges.add(new Edge(v, u, w)); // Add reverse edge for Bellman-Ford
+    }
+}
+
+// Pair class for Dijkstra
+class Pair {
+    int node;
+    int weight;
+
+    public Pair(int node, int weight) {
+        this.node = node;
+        this.weight = weight;
+    }
+}
+
+// Edge class for Bellman-Ford
+class Edge {
+    int src, dest, weight;
+
+    public Edge(int src, int dest, int weight) {
+        this.src = src;
+        this.dest = dest;
+        this.weight = weight;
+    }
+}
